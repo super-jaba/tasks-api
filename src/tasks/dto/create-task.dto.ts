@@ -1,4 +1,4 @@
 export class CreateTaskDto {
     readonly title: string;
-    readonly ownerId: string;
+    readonly owner: string;
 }

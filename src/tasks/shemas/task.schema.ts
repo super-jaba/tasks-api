@@ -14,7 +14,7 @@ export class Task {
     @Prop({default: false})
     isCompleted: boolean
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User'})
+    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true})
     owner: User
 
     // TODO: Add timestamp
