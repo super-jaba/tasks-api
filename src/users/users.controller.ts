@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
@@ -9,8 +9,11 @@ export class UsersController {
     constructor(private usersService: UsersService) {}
 
     @Post()
-    signup(@Body() candidate: CreateUserDto) {
-        // Add try catch blocks
-        this.usersService.createUser(candidate);
+    async signup(@Body() candidate: CreateUserDto) {
+        try {
+            return await this.usersService.createUser(candidate);
+        } catch (e) {
+            throw new HttpException('User already exists.', HttpStatus.BAD_REQUEST);
+        }
     }
 }
