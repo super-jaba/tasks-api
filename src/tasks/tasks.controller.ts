@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Get, HttpException, HttpStatus, Put, Delete, HttpCode, Query } from '@nestjs/common';
+import { Body, Controller, Param, Post, Get, HttpStatus, Put, Delete, HttpCode, Query, NotFoundException, BadRequestException } from '@nestjs/common';
 
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksByOwnerQuery } from './dto/get-tasks-by-owner-query.dto';
@@ -20,7 +20,7 @@ export class TasksController {
     async getTask(@Param('id') id: string) {
         const task = this.tasksService.getTaskById(id);
         if (!task) {
-            throw new HttpException('Task not found.', HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Task not found.');
         }
         return task;
     }
@@ -33,13 +33,16 @@ export class TasksController {
     @Put(':id')
     async updateTask(@Param('id') id: string, @Body() fieldsToUpdate: UpdateTaskDto) {
         if (!this.tasksService.updateDtoIsValid(fieldsToUpdate)) {
-            throw new HttpException('You need to pass at least one field to update', HttpStatus.BAD_REQUEST);
+            throw new BadRequestException('You need to pass at least one field to update.');
         }
         return await this.tasksService.updateTask(id, fieldsToUpdate);
     }
 
     @Delete(':id')
     async deleteTask(@Param('id') id: string) {
-        return await this.tasksService.deleteTask(id);
+        const deleted = await this.tasksService.deleteTask(id);
+        if (!deleted) {
+            throw new NotFoundException('Task not found.');
+        }
     }
 }

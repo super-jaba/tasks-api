@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, NotFoundException, Param, Post } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
@@ -14,7 +14,7 @@ export class UsersController {
         try {
             return await this.usersService.createUser(candidate);
         } catch (e) {
-            throw new HttpException('User already exists.', HttpStatus.BAD_REQUEST);
+            throw new BadRequestException('User already exists.');
         }
     }
 
@@ -22,7 +22,7 @@ export class UsersController {
     async getUser(@Param('name') name: string) {
         const user = await this.usersService.findUserByName(name);
         if (!user) {
-            throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+            throw new NotFoundException('User not found.');
         }
         return user;
     }
